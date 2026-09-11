@@ -33,13 +33,14 @@ dbInstance.exec('PRAGMA foreign_keys = ON');
 
 export { dbInstance as db };
 
-function sanitizeParams(params?: unknown[]): unknown[] | undefined {
+function sanitizeParams(params?: unknown[]): SQLInputValue[] | undefined {
   if (!params) return params;
   return params.map((p) => {
     if (p === undefined) return null;
     if (typeof p === 'boolean') return p ? 1 : 0;
     if (Array.isArray(p) || (typeof p === 'object' && p !== null)) return JSON.stringify(p);
-    return p;
+    if (typeof p === 'number' || typeof p === 'string' || typeof p === 'bigint' || p instanceof Uint8Array) return p;
+    return String(p);
   });
 }
 
