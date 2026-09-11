@@ -8,6 +8,7 @@
 // ---------------------------------------------------------------------------
 
 const API_BASE = '';
+import type { GenerationParams } from '../types';
 
 export function getAudioUrl(audioUrl: string | undefined | null, songId?: string): string | undefined {
   if (!audioUrl) return undefined;
