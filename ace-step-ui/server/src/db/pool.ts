@@ -1,23 +1,35 @@
-import Database from 'better-sqlite3';
+// ---------------------------------------------------------------------------
+// SQLite access layer backed by Node's built-in `node:sqlite` module.
+//
+// Using node:sqlite (instead of the native `better-sqlite3` package) avoids
+// any C++ compilation step, which is required on Node >= 25 where the old
+// better-sqlite3 bindings no longer build (V8 API changes). node:sqlite ships
+// with Node 22.5+ and works out of the box on Apple Silicon and Linux.
+//
+// The module exposes a `pool`-like facade (`pool.query(...)`) plus the raw
+// `db` instance, so the rest of the app keeps a familiar, stable API.
+// ---------------------------------------------------------------------------
+
+import { DatabaseSync } from 'node:sqlite';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { randomUUID } from 'crypto';
+import { mkdirSync } from 'fs';
 import { config } from '../config/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const dataDir = path.dirname(config.database.path);
-import { mkdirSync } from 'fs';
 try {
   mkdirSync(dataDir, { recursive: true });
 } catch {
   // already exists
 }
 
-const dbInstance = new Database(config.database.path);
-dbInstance.pragma('journal_mode = WAL');
-dbInstance.pragma('foreign_keys = ON');
+const dbInstance = new DatabaseSync(config.database.path);
+dbInstance.exec('PRAGMA journal_mode = WAL');
+dbInstance.exec('PRAGMA foreign_keys = ON');
 
 export { dbInstance as db };
 
@@ -36,7 +48,7 @@ interface QueryResult {
   rowCount: number;
 }
 
-function executeQuery(sql: string, params?: unknown[], dbRef: Database.Database = dbInstance): QueryResult {
+function executeQuery(sql: string, params?: unknown[], dbRef: DatabaseSync = dbInstance): QueryResult {
   const sanitizedParams = sanitizeParams(params);
 
   let convertedSql = sql;
@@ -52,6 +64,7 @@ function executeQuery(sql: string, params?: unknown[], dbRef: Database.Database 
     .replace(/::boolean/gi, '')
     .replace(/GREATEST\(([^,]+),\s*(\d+)\)/gi, 'MAX($1, $2)');
 
+  // Auto-generate UUID for INSERTs that don't supply an id column
   const insertMatch = convertedSql.match(/INSERT INTO (\w+)\s*\(([^)]+)\)/i);
   if (insertMatch) {
     const tableName = insertMatch[1];
@@ -78,7 +91,9 @@ function executeQuery(sql: string, params?: unknown[], dbRef: Database.Database 
     } else {
       const stmt = dbRef.prepare(convertedSql);
       const result = sanitizedParams ? stmt.run(...sanitizedParams) : stmt.run();
-      return { rows: [], rowCount: result.changes };
+      // node:sqlite run() returns { changes, lastInsertRowid }
+      const changes = typeof result === 'object' && result !== null ? Number((result as { changes?: number | bigint }).changes || 0) : 0;
+      return { rows: [], rowCount: changes };
     }
   } catch (error) {
     console.error('SQLite query error:', error);
@@ -120,6 +135,6 @@ export const pool = {
     return client;
   },
   end: async () => {
-    dbInstance.close();
+    try { dbInstance.close(); } catch { /* ignore */ }
   },
 };
