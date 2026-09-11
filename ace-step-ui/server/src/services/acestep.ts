@@ -267,7 +267,10 @@ async function submitToApi(params: GenerationParams): Promise<{ taskId: string }
     const errorText = await response.text();
     throw new Error(`API error: ${response.status} - ${errorText}`);
   }
-  const result = await response.json();
+  const result = (await response.json()) as {
+    data?: { task_id?: string; job_id?: string };
+    task_id?: string; job_id?: string;
+  };
   const taskId = result.data?.task_id || result.data?.job_id || result.job_id || result.task_id;
   if (!taskId) throw new Error('No task ID returned from API');
   return { taskId };
