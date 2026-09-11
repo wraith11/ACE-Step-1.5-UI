@@ -296,7 +296,9 @@ async function pollApiResult(taskId: string, maxWaitMs = 600000): Promise<ApiTas
     if (taskData.status === 1) {
       let resultData;
       try { resultData = typeof taskData.result === 'string' ? JSON.parse(taskData.result) : taskData.result; } catch { resultData = []; }
-      const audioPaths = Array.isArray(resultData) ? resultData.map((r: { file?: string }) => r.file).filter(Boolean) : [];
+      const audioPaths: string[] = Array.isArray(resultData)
+        ? resultData.map((r: { file?: string }) => r.file).filter((f): f is string => Boolean(f))
+        : [];
       const metas = resultData[0]?.metas;
       return { status: 1, audioPaths, metas };
     } else if (taskData.status === 2) {
