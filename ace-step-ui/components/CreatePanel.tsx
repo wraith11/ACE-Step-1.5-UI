@@ -451,7 +451,7 @@ export const CreatePanel: React.FC<CreatePanelProps> = ({ onGenerate, isGenerati
             <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">ACE-Step v1.5</span>
           </div>
           <div className="flex items-center bg-zinc-200 dark:bg-black/40 rounded-lg p-1 border border-zinc-300 dark:border-white/5">
-            {(['Custom', 'Remix', 'Cover', 'Repaint'].includes(mode) ? ['Custom', 'Remix', 'Cover', 'Repaint'] : ['Custom', 'Remix', 'Cover', 'Repaint']).map((m) => (
+            {['Custom', 'Remix', 'Cover', 'Repaint'].map((m) => (
               <button
                 key={m}
                 onClick={() => setMode(m as any)}
