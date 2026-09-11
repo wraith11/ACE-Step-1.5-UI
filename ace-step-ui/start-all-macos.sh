@@ -69,14 +69,14 @@ echo "  All Services Starting!"
 echo "=================================="
 echo "  ACE-Step API: http://localhost:8001"
 echo "  Backend:      http://localhost:3001"
-echo "  Frontend:     http://localhost:3000"
+echo "  Frontend:     http://localhost:$UI_PORT"
 echo
 if command -v ip >/dev/null 2>&1; then
   LOCAL_IP=$(ip route get 1.1.1.1 2>/dev/null | grep -oP 'src \K\S+' || echo "")
-  [ -n "$LOCAL_IP" ] && echo "  LAN Access:   http://$LOCAL_IP:3000"
+  [ -n "$LOCAL_IP" ] && echo "  LAN Access:   http://$LOCAL_IP:$UI_PORT"
 elif command -v ifconfig >/dev/null 2>&1; then
   LOCAL_IP=$(ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | head -n1)
-  [ -n "$LOCAL_IP" ] && echo "  LAN Access:   http://$LOCAL_IP:3000"
+  [ -n "$LOCAL_IP" ] && echo "  LAN Access:   http://$LOCAL_IP:$UI_PORT"
 fi
 echo
 echo "  Logs: $UI_DIR/logs/"
@@ -86,7 +86,7 @@ echo "Waiting for services to initialize (15s)..."
 sleep 15
 
 if [ -n "$FRONTEND_PID" ] && kill -0 "$FRONTEND_PID" 2>/dev/null; then
-  echo "Frontend is up at http://localhost:3000"
+  echo "Frontend is up at http://localhost:$UI_PORT"
 else
   echo "Warning: Frontend may not have started. Check $UI_DIR/logs/frontend.log"
 fi
