@@ -115,8 +115,6 @@ export const songsApi = {
 };
 
 // --- Generation ---
-import type { GenerationParams } from '../types';
-
 export interface GenerationJob {
   jobId: string;
   status: 'pending' | 'queued' | 'running' | 'succeeded' | 'failed';
