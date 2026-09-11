@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  Sparkles, ChevronDown, Settings2, Dices, Music2, Sliders, Hash, Wand2, Shuffle, RefreshCw,
+  Sparkles, ChevronDown, Settings2, Dices, Sliders, Wand2,
 } from 'lucide-react';
 import { GenerationParams } from '../types';
 import { useAuth } from '../context/AuthContext';
-import { generateApi } from '../services/api';
 import {
   createSongFromDescription, enhanceCaptionLyrics, fetchRandomSample,
 } from '../services/localAIService';
