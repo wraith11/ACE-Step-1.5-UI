@@ -482,12 +482,12 @@ async function localApiCall(endpoint: string, body: Record<string, unknown>): Pr
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
-  const json = await response.json().catch(() => ({}));
+  const json = (await response.json().catch(() => ({}))) as Record<string, unknown>;
   if (!response.ok) {
     const detail = json.detail || json.error || `Request failed (${response.status})`;
-    throw new Error(detail);
+    throw new Error(String(detail));
   }
-  if (json.error) throw new Error(json.error);
+  if (json.error) throw new Error(String(json.error));
   return json.data;
 }
 
