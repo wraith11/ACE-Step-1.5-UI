@@ -292,7 +292,7 @@ async function pollApiResult(taskId: string, maxWaitMs = 600000): Promise<ApiTas
       body: JSON.stringify({ task_id_list: [taskId] }),
     });
     if (!response.ok) throw new Error(`API poll error: ${response.status}`);
-    const result = await response.json();
+    const result = (await response.json()) as { data?: Array<{ status?: number; result?: unknown }> };
     const taskData = result.data?.[0];
     if (!taskData) {
       await new Promise((r) => setTimeout(r, pollInterval));
