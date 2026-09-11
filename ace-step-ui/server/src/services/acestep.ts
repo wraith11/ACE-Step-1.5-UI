@@ -73,7 +73,9 @@ export async function isApiAvailable(): Promise<boolean> {
       const response = await fetch(`${ACESTEP_API}/health`, { signal: controller.signal });
       clearTimeout(timeout);
       if (response.ok) {
-        const data = await response.json();
+        const data = (await response.json()) as {
+          status?: string; healthy?: boolean; data?: { status?: string };
+        };
         apiAvailableCache = data.status === 'ok' || data.healthy === true || data.data?.status === 'ok';
         return apiAvailableCache;
       }
