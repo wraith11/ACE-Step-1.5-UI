@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+dist/
+
+# Local env
+.env
+server/.env
+
+# Local data / audio
+server/data/
+server/public/audio/
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
