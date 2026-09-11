@@ -10,7 +10,7 @@
 // `db` instance, so the rest of the app keeps a familiar, stable API.
 // ---------------------------------------------------------------------------
 
-import { DatabaseSync } from 'node:sqlite';
+import { DatabaseSync, type SQLInputValue } from 'node:sqlite';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { randomUUID } from 'crypto';
