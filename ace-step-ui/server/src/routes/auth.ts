@@ -8,7 +8,7 @@ import { authMiddleware, AuthenticatedRequest } from '../middleware/auth.js';
 const router = Router();
 
 function signToken(user: { id: string; username: string; isAdmin?: boolean }): string {
-  return jwt.sign(user, config.jwt.secret, { expiresIn: config.jwt.expiresIn });
+  return jwt.sign(user, config.jwt.secret, { expiresIn: config.jwt.expiresIn as jwt.SignOptions['expiresIn'] });
 }
 
 // Auto-login for local single-user app
