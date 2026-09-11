@@ -17,6 +17,11 @@ UI_DIR="$(pwd)"
 REPO_ROOT="$(cd "$UI_DIR/.." && pwd)"
 ACESTEP_PATH="${ACESTEP_PATH:-$REPO_ROOT}"
 
+# Frontend port (override to avoid collisions, e.g. Open WebUI on 3000)
+#   UI_PORT=3005 ./start-all-macos.sh
+UI_PORT="${UI_PORT:-3000}"
+export UI_PORT
+
 mkdir -p "$UI_DIR/logs"
 
 echo "=================================="
