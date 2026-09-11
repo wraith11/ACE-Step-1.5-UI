@@ -27,6 +27,13 @@ From the `ace-step-ui/` folder:
 Open **http://localhost:3000** — or from another device on your network
 **http://YOUR_MAC_IP:3000**.
 
+> **Port conflict?** If another service (e.g. Open WebUI) already uses port
+> 3000, run the frontend on a different port:
+> ```bash
+> UI_PORT=3005 ./start-all-macos.sh
+> # then open http://localhost:3005
+> ```
+
 On first use you'll be asked for a username (stored locally). Then just describe
 a song and hit **Create**.
 
