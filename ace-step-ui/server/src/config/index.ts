@@ -21,8 +21,8 @@ export const config = {
     apiUrl: process.env.ACESTEP_API_URL || 'http://localhost:8001',
   },
 
-  // Frontend URL
-  frontendUrl: process.env.FRONTEND_URL || 'http://localhost:3000',
+  // Frontend URL (mirrors UI_PORT; used for CORS + redirects)
+  frontendUrl: process.env.FRONTEND_URL || `http://localhost:${process.env.UI_PORT || 3000}`,
 
   // Storage (local only)
   storage: {
