@@ -134,9 +134,11 @@ reference-audio, cover, and repaint workloads; the UI just streams results.
 
 ```
 ├── acestep/            # ACE-Step backend (upstream-tracking, keep for merges)
-├── webui/              # Our web interface (React + Express)
-│   ├── src/            #   frontend (App, components, services)
-│   └── server/         #   backend (Express, SQLite, routes)
+├── webui/              # Our web interface
+│   ├── components/     #   React UI components
+│   ├── context/        #   React contexts
+│   ├── services/       #   API + local-AI frontend services
+│   └── server/         #   Express + SQLite backend
 ├── start.sh            # launch everything
 ├── stop.sh             # stop everything
 ├── setup.sh            # install UI dependencies once
