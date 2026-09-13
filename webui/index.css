@@ -1,0 +1,19 @@
+/* ACE-Step Music — additional styles layered on top of the Tailwind CDN.
+   The main Tailwind utilities + theme are provided by the CDN script in
+   index.html. This file holds small custom additions. */
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Smooth color transitions when toggling dark/light mode */
+body,
+.dark body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
