@@ -1,6 +1,21 @@
-/* ACE-Step Music — additional styles layered on top of the Tailwind CDN.
-   The main Tailwind utilities + theme are provided by the CDN script in
-   index.html. This file holds small custom additions. */
+/* ACE-Step Music — Tailwind v4 entry stylesheet.
+   Tailwind is compiled at build time by the @tailwindcss/vite plugin (fully
+   local, no CDN). Theme colors and dark-mode variant are declared here. */
+
+@import "tailwindcss";
+
+/* Dark mode is enabled via the `.dark` class on <html>. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Custom theme tokens used throughout the UI. */
+@theme {
+  --color-suno: #09090b;
+  --color-suno-sidebar: #000000;
+  --color-suno-panel: #121214;
+  --color-suno-card: #18181b;
+  --color-suno-hover: #27272a;
+  --color-suno-border: #27272a;
+}
 
 html, body, #root {
   height: 100%;
@@ -8,6 +23,7 @@ html, body, #root {
 }
 
 body {
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -17,3 +33,44 @@ body,
 .dark body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* ---- Scrollbars ---- */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #a1a1aa; }
+.dark ::-webkit-scrollbar-thumb { background: #3f3f46; }
+.dark ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+.custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #52525b; }
+
+/* ---- Text gradient ---- */
+.gradient-text {
+  background: linear-gradient(to right, #f472b6, #a78bfa, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ---- Animations ---- */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.animate-in { animation: fade-in 0.25s ease-out; }
+.fade-in { animation: fade-in 0.25s ease-out; }
+.slide-in-from-bottom-2 { animation: fade-in 0.25s ease-out; }
+.drawer-slide-in-right { animation: slide-in-right 0.3s ease-out forwards; }
+.drawer-backdrop-in { animation: fade-in 0.3s ease-out forwards; }
