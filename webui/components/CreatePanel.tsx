@@ -830,18 +830,22 @@ export const CreatePanel: React.FC<CreatePanelProps> = ({ onGenerate, isGenerati
 
       <div className="p-4 mt-auto sticky bottom-0 bg-zinc-50/95 dark:bg-suno-panel/95 backdrop-blur-sm z-10 border-t border-zinc-200 dark:border-white/5 space-y-2">
         <div className="flex items-center justify-around gap-1 text-[10px]">
-          <label className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400 cursor-pointer">
+          <label className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400 cursor-pointer" title="Think (CoT): Use the 5Hz language model to plan the song (caption + lyrics + structure) before generating audio. Higher quality but slower and more VRAM.">
             <input type="checkbox" checked={thinking} onChange={() => setThinking(!thinking)} className="accent-pink-500" /> Think
           </label>
-          <label className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400 cursor-pointer">
+          <label className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400 cursor-pointer" title="Autogen: Automatically generate a description/metadata when it is missing, instead of failing. Convenient for quick experiments.">
             <input type="checkbox" checked={autogen} onChange={() => setAutogen(!autogen)} className="accent-pink-500" /> Autogen
           </label>
-          <label className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400 cursor-pointer">
+          <label className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400 cursor-pointer" title="Scores: Compute and attach quality score sidecars for each generated track (extra processing time).">
             <input type="checkbox" checked={getScores} onChange={() => setGetScores(!getScores)} className="accent-pink-500" /> Scores
           </label>
-          <label className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400 cursor-pointer">
+          <label className="flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400 cursor-pointer" title="LRC: Generate a synchronized lyric file (.lrc) alongside the audio.">
             <input type="checkbox" checked={getLrc} onChange={() => setGetLrc(!getLrc)} className="accent-pink-500" /> LRC
           </label>
+          <span
+            title="Think = language-model planning. Autogen = auto-fill missing metadata. Scores = quality scoring sidecars. LRC = synced lyric file. Hover each toggle for details."
+            className="text-zinc-400 dark:text-zinc-500 cursor-help"
+          >ⓘ</span>
         </div>
         <button onClick={handleGenerate} disabled={isGenerating}
           className="w-full h-12 rounded-xl font-bold text-base flex items-center justify-center gap-2 transition-all transform active:scale-[0.98] bg-gradient-to-r from-orange-500 to-pink-600 text-white shadow-lg hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed">
