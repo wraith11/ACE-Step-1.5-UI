@@ -227,7 +227,13 @@ function buildRequestBody(params: GenerationParams): Record<string, unknown> {
   if (params.bpm && params.bpm > 0) body.bpm = params.bpm;
   if (params.keyScale) body.key_scale = params.keyScale;
   if (params.timeSignature) body.time_signature = params.timeSignature;
-  if (params.batchSize && params.batchSize > 1) body.batch_size = params.batchSize;
+  if (params.batchSize && params.batchSize > 1) {
+    body.batch_size = params.batchSize;
+  } else {
+    // Always send an explicit batch size so the API default (often 2) is not
+    // used when the user requested a single variation.
+    body.batch_size = 1;
+  }
   if (params.customTimesteps) body.timesteps = params.customTimesteps;
   if (params.audioCodes) body.audio_code_string = params.audioCodes;
   if (params.trackName) body.track_name = params.trackName;
