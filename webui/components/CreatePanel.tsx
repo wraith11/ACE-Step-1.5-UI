@@ -309,7 +309,7 @@ export const CreatePanel: React.FC<CreatePanelProps> = ({ onGenerate, isGenerati
   const handleRandom = async () => {
     setIsGeneratingSample(true);
     try {
-      const sample = await fetchRandomSample(mode === 'Custom' ? 'custom_mode' : 'simple_mode');
+      const sample = await fetchRandomSample(mode === 'Custom' ? 'custom_mode' : 'simple_mode', token);
       if (sample.caption) setCaption(sample.caption);
       if (sample.lyrics) setLyrics(sample.lyrics);
       if (sample.description) setSimpleQuery(sample.description);
