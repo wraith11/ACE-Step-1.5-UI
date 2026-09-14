@@ -10,6 +10,7 @@
 /* Custom theme tokens used throughout the UI. */
 @theme {
   --color-suno: #09090b;
+  --color-suno-DEFAULT: #09090b;
   --color-suno-sidebar: #000000;
   --color-suno-panel: #121214;
   --color-suno-card: #18181b;
