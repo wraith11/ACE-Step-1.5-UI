@@ -186,7 +186,7 @@ export const CreatePanel: React.FC<CreatePanelProps> = ({ onGenerate, isGenerati
   const [completeTrackClasses, setCompleteTrackClasses] = useState('');
 
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [showOptional, setShowOptional] = useState(true);
+  const [showOptional, setShowOptional] = useState(false);
 
   const [referenceTracks, setReferenceTracks] = useState<any[]>([]);
   const [showAudioModal, setShowAudioModal] = useState(false);
