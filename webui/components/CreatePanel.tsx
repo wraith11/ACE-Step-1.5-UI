@@ -258,7 +258,7 @@ export const CreatePanel: React.FC<CreatePanelProps> = ({ onGenerate, isGenerati
     }
     setIsGeneratingSample(true);
     try {
-      const result = await createSongFromDescription(simpleQuery.trim(), instrumental, vocalLanguage);
+      const result = await createSongFromDescription(simpleQuery.trim(), instrumental, vocalLanguage, token);
       setCaption(result.style);
       if (result.lyrics) setLyrics(result.lyrics);
       if (result.title) setTitle(result.title);
