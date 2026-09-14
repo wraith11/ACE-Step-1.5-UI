@@ -289,7 +289,7 @@ export const CreatePanel: React.FC<CreatePanelProps> = ({ onGenerate, isGenerati
         duration: durationAuto ? undefined : duration,
         keyScale: keyAuto ? undefined : keyScale,
         timeSignature: timesigAuto ? undefined : timeSignature,
-      });
+      }, token);
       if (result.style) setCaption(result.style);
       if (result.lyrics) setLyrics(result.lyrics);
       if (result.title) setTitle(result.title);
