@@ -11,8 +11,8 @@
 //   POST /format_input      ->  enhance existing caption/lyrics + auto-fill metadata
 //   POST /create_random_sample -> random pre-loaded example payload
 //
-// All responses are wrapped in { data: {...}, code, error } envelopes. The
-// helper functions below unwrap and normalize them into a common shape.
+// The local AI endpoints live behind the Express backend and require the auth
+// token (Authorization: Bearer), same as the generation endpoints.
 // ---------------------------------------------------------------------------
 
 const API_BASE = '';
@@ -49,6 +49,12 @@ function deriveTitle(caption: string): string {
   return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
+function authHeaders(token?: string | null): HeadersInit {
+  const headers: HeadersInit = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  return headers;
+}
+
 // ---------------------------------------------------------------------------
 // Create a full song suggestion from a natural-language description
 // (Simple-mode "AI Generate" equivalent).
@@ -56,11 +62,12 @@ function deriveTitle(caption: string): string {
 export async function createSongFromDescription(
   description: string,
   instrumental: boolean,
-  vocalLanguage: string
+  vocalLanguage: string,
+  token?: string | null
 ): Promise<LocalGeneratedSong> {
   const res = await fetch(`${API_BASE}/api/generate/local/sample`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: authHeaders(token),
     body: JSON.stringify({ query: description, instrumental, vocal_language: vocalLanguage }),
   });
   if (!res.ok) {
@@ -98,11 +105,12 @@ export async function enhanceCaptionLyrics(
     duration?: number;
     keyScale?: string;
     timeSignature?: string;
-  }
+  },
+  token?: string | null
 ): Promise<LocalGeneratedSong> {
   const res = await fetch(`${API_BASE}/api/generate/local/format`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: authHeaders(token),
     body: JSON.stringify({
       prompt: caption,
       lyrics,
@@ -136,7 +144,10 @@ export async function enhanceCaptionLyrics(
 // ---------------------------------------------------------------------------
 // Fetch a random pre-loaded example (Simple-mode "dice"/random button).
 // ---------------------------------------------------------------------------
-export async function fetchRandomSample(sampleType: 'simple_mode' | 'custom_mode'): Promise<{
+export async function fetchRandomSample(
+  sampleType: 'simple_mode' | 'custom_mode',
+  token?: string | null
+): Promise<{
   description?: string;
   caption?: string;
   lyrics?: string;
@@ -149,7 +160,7 @@ export async function fetchRandomSample(sampleType: 'simple_mode' | 'custom_mode
 }> {
   const res = await fetch(`${API_BASE}/api/generate/local/random`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: authHeaders(token),
     body: JSON.stringify({ sample_type: sampleType }),
   });
   if (!res.ok) {
