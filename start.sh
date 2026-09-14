@@ -31,20 +31,17 @@ echo "  Web UI:      $WEBUI_DIR"
 echo
 
 # --- Step 1: ACE-Step API server (MLX backend for M-series) ---
-# IMPORTANT: ACESTEP_NO_INIT=true makes the API server lazy-load models on the
-# first generation request instead of at startup. This keeps the startup memory
-# footprint tiny, so running Docker/OrbStack containers (Open WebUI, SearXNG)
-# are not starved of RAM. ACESTEP_SKIP_VRAM_PREFLIGHT avoids the heavy VRAM
-# probe at boot.
-export ACESTEP_NO_INIT=true
-export ACESTEP_SKIP_VRAM_PREFLIGHT=true
+# Models are lazy-loaded on first request by default (ACESTEP_NO_INIT default
+# true), so startup stays light. CHECK_UPDATE=false skips the git fetch that
+# the launcher otherwise performs on every start.
+export CHECK_UPDATE=false
 
 echo "[1/3] Starting ACE-Step API server..."
 if [ -f "$ACESTEP_PATH/start_api_server_macos.sh" ]; then
-  (cd "$ACESTEP_PATH" && ACESTEP_NO_INIT=true ACESTEP_SKIP_VRAM_PREFLIGHT=true ./start_api_server_macos.sh > "$REPO_ROOT/logs/api.log" 2>&1) &
+  (cd "$ACESTEP_PATH" && CHECK_UPDATE=false ./start_api_server_macos.sh > "$REPO_ROOT/logs/api.log" 2>&1) &
   API_PID=$!
 elif command -v uv >/dev/null 2>&1; then
-  (cd "$ACESTEP_PATH" && ACESTEP_LM_BACKEND="mlx" ACESTEP_NO_INIT=true ACESTEP_SKIP_VRAM_PREFLIGHT=true uv run acestep-api --port 8001 > "$REPO_ROOT/logs/api.log" 2>&1) &
+  (cd "$ACESTEP_PATH" && ACESTEP_LM_BACKEND="mlx" CHECK_UPDATE=false uv run acestep-api --port 8001 > "$REPO_ROOT/logs/api.log" 2>&1) &
   API_PID=$!
 else
   echo "Warning: No launcher found and uv is not installed. Start the API manually on port 8001."
