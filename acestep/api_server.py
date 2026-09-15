@@ -232,6 +232,10 @@ def create_app() -> FastAPI:
 
         async def _run_one_job(job_id: str, req: GenerateMusicRequest) -> None:
             llm: LLMHandler = app.state.llm_handler
+            # Mark activity so the idle-unload monitor keeps models loaded.
+            monitor = getattr(app.state, "_idle_monitor", None)
+            if monitor is not None:
+                monitor.touch()
 
             def _build_blocking_result(
                 selected_handler: AceStepHandler,
