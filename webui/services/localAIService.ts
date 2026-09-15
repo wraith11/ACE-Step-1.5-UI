@@ -116,6 +116,13 @@ export async function createSongFromDescription(
 // ---------------------------------------------------------------------------
 // Enhance existing caption + lyrics and auto-fill metadata
 // (Custom-mode "Format & Enhance" / sparkles equivalent).
+//
+// Behaviour:
+//   - If the user already has lyrics, the format endpoint enhances metadata
+//     (caption, BPM, key, ...) and keeps/refines the lyrics.
+//   - If the lyrics field is empty, we ask the LM to generate a lyric
+//     suggestion that fits the caption/genre (via the sample endpoint) instead
+//     of leaving the field empty or writing "[Instrumental]".
 // ---------------------------------------------------------------------------
 export async function enhanceCaptionLyrics(
   caption: string,
@@ -128,6 +135,12 @@ export async function enhanceCaptionLyrics(
   },
   token?: string | null
 ): Promise<LocalGeneratedSong> {
+  // No lyrics yet -> generate a suggestion matching the caption/genre.
+  if (!lyrics.trim()) {
+    const sample = await createSongFromDescription(caption, false, 'en', token);
+    return sample;
+  }
+
   const res = await fetch(`${API_BASE}/api/generate/local/format`, {
     method: 'POST',
     headers: authHeaders(token),
