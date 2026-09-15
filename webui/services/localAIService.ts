@@ -141,9 +141,17 @@ export async function enhanceCaptionLyrics(
   const data = unwrap(payload, {} as Record<string, unknown>);
 
   const captionOut = String(data.caption || caption || '');
+  // If the model returned "[Instrumental]" but the user already has real
+  // lyrics, keep the user's lyrics rather than overwriting them.
+  let lyricsOut = String(data.lyrics || '');
+  if (lyrics.trim() && isInstrumentalLyrics(lyricsOut)) {
+    lyricsOut = lyrics;
+  } else if (isInstrumentalLyrics(lyricsOut)) {
+    lyricsOut = '';
+  }
   return {
     title: deriveTitle(captionOut),
-    lyrics: String(data.lyrics || lyrics || ''),
+    lyrics: lyricsOut,
     style: captionOut,
     caption: captionOut,
     bpm: Number(data.bpm || 0),
