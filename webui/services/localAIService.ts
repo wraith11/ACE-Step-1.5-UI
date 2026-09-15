@@ -55,6 +55,14 @@ function authHeaders(token?: string | null): HeadersInit {
   return headers;
 }
 
+// A lyrics value that means "no vocals" — the LM emits these when it decides
+// a track is instrumental. We never want to write this into the user's lyrics
+// field; real text should stay text.
+function isInstrumentalLyrics(value: string): boolean {
+  const v = value.trim().toLowerCase();
+  return v === '' || v === '[instrumental]' || v === '[inst]' || v === 'instrumental';
+}
+
 // ---------------------------------------------------------------------------
 // Create a full song suggestion from a natural-language description
 // (Simple-mode "AI Generate" equivalent).
@@ -79,7 +87,12 @@ export async function createSongFromDescription(
 
   const caption = String(data.caption || description || '');
   const style = caption;
-  const lyrics = String(data.lyrics || '');
+  let lyrics = String(data.lyrics || '');
+  // If the model decided this is instrumental but the user asked for vocals,
+  // do not force "[Instrumental]" into the lyrics box.
+  if (!instrumental && isInstrumentalLyrics(lyrics)) {
+    lyrics = '';
+  }
   return {
     title: deriveTitle(caption),
     lyrics,
