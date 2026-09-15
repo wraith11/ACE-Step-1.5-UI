@@ -47,6 +47,14 @@ async def ensure_models_initialized(app_state: Any) -> None:
         if init_kwargs is None:
             raise RuntimeError("Model not initialized and no init kwargs available")
 
+        # RAM safety check before loading models (avoids OOM / starving the
+        # Docker/OrbStack VM on the same host).
+        from acestep.api.model_lifecycle import check_ram_before_load
+
+        ram_error = check_ram_before_load()
+        if ram_error:
+            raise RuntimeError(ram_error)
+
         print("[API Server] First request received — lazy-loading models...")
         from acestep.api.startup_model_init import do_model_initialization
 
