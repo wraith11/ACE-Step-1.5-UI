@@ -21,6 +21,7 @@ import os
 import sys
 import time
 import urllib.parse
+import asyncio
 from contextlib import asynccontextmanager
 from typing import Any, Dict, List, Optional
 from loguru import logger
