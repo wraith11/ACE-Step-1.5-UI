@@ -61,7 +61,7 @@ def run_api_server_main(
     parser.add_argument(
         "--no-init",
         action="store_true",
-        default=env_bool("ACESTEP_NO_INIT", False),
+        default=env_bool("ACESTEP_NO_INIT", True),
         help="Skip model loading at startup (models will be lazy-loaded on first request). "
         "Can also be set via ACESTEP_NO_INIT=true environment variable.",
     )

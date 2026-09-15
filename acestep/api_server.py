@@ -21,6 +21,7 @@ import os
 import sys
 import time
 import urllib.parse
+import asyncio
 from contextlib import asynccontextmanager
 from typing import Any, Dict, List, Optional
 from loguru import logger
@@ -49,6 +50,7 @@ from acestep.api.job_runtime_state import (
     update_terminal_job_cache as _update_terminal_job_cache,
 )
 from acestep.api.startup_model_init import initialize_models_at_startup
+from acestep.api.model_lifecycle import ModelIdleMonitor
 from acestep.api.worker_runtime import start_worker_tasks, stop_worker_tasks
 from acestep.api.server_utils import (
     env_bool as _env_bool,
@@ -231,6 +233,10 @@ def create_app() -> FastAPI:
 
         async def _run_one_job(job_id: str, req: GenerateMusicRequest) -> None:
             llm: LLMHandler = app.state.llm_handler
+            # Mark activity so the idle-unload monitor keeps models loaded.
+            monitor = getattr(app.state, "_idle_monitor", None)
+            if monitor is not None:
+                monitor.touch()
 
             def _build_blocking_result(
                 selected_handler: AceStepHandler,
@@ -305,9 +311,14 @@ def create_app() -> FastAPI:
             ensure_model_downloaded=_ensure_model_downloaded,
             env_bool=_env_bool,
         )
+        # Inactivity monitor: unloads models after a configurable idle timeout to
+        # free system RAM (avoids starving co-located services such as Docker).
+        app.state._idle_monitor = ModelIdleMonitor(app.state)
+        app.state._idle_monitor.start(asyncio.get_running_loop())
         try:
             yield
         finally:
+            app.state._idle_monitor.stop()
             stop_worker_tasks(
                 workers=workers,
                 cleanup_task=cleanup_task,
