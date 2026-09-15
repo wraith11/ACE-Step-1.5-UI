@@ -306,9 +306,14 @@ def create_app() -> FastAPI:
             ensure_model_downloaded=_ensure_model_downloaded,
             env_bool=_env_bool,
         )
+        # Inactivity monitor: unloads models after a configurable idle timeout to
+        # free system RAM (avoids starving co-located services such as Docker).
+        app.state._idle_monitor = ModelIdleMonitor(app.state)
+        app.state._idle_monitor.start(asyncio.get_running_loop())
         try:
             yield
         finally:
+            app.state._idle_monitor.stop()
             stop_worker_tasks(
                 workers=workers,
                 cleanup_task=cleanup_task,
