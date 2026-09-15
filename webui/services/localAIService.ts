@@ -60,7 +60,14 @@ function authHeaders(token?: string | null): HeadersInit {
 // field; real text should stay text.
 function isInstrumentalLyrics(value: string): boolean {
   const v = value.trim().toLowerCase();
-  return v === '' || v === '[instrumental]' || v === '[inst]' || v === 'instrumental';
+  if (v === '' || v === '[instrumental]' || v === '[inst]' || v === 'instrumental') {
+    return true;
+  }
+  // Handles cases where the model returns "[Instrumental]" plus trailing
+  // whitespace/tags but no actual vocal lines (e.g. "[Instrumental]\n\n[End]").
+  const firstLine = v.split('\n').map((s) => s.trim()).filter(Boolean)[0] || '';
+  const clean = firstLine.replace(/[[\]\s]/g, '');
+  return clean === 'instrumental' || clean === 'inst';
 }
 
 // ---------------------------------------------------------------------------
