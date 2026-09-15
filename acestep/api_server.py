@@ -49,6 +49,7 @@ from acestep.api.job_runtime_state import (
     update_terminal_job_cache as _update_terminal_job_cache,
 )
 from acestep.api.startup_model_init import initialize_models_at_startup
+from acestep.api.model_lifecycle import ModelIdleMonitor
 from acestep.api.worker_runtime import start_worker_tasks, stop_worker_tasks
 from acestep.api.server_utils import (
     env_bool as _env_bool,
